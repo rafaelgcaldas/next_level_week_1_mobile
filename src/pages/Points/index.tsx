@@ -19,6 +19,7 @@ interface Point {
   id: number;
   name: string;
   image: string;
+  image_url: string;
   latitude: number;
   longitude: number;
 }
@@ -64,7 +65,7 @@ const Points = () => {
     }
 
     loadPosition();
-  });
+  }, []);
 
   useEffect(() => {
     api.get('items').then(response => {
@@ -75,11 +76,12 @@ const Points = () => {
   useEffect(() => {
     api.get('points', {
       params: {
-        city: 'Rio do Sul',
-        uf: 'Sc',
-        items: [1, 2]
+        city: 'Jeriquara',
+        uf: 'SP',
+        items: [7, 8, 9]
       }
     }). then((response) => {
+      console.log(response.data)
       setPoints(response.data);
     });
   }, []);
@@ -88,8 +90,8 @@ const Points = () => {
     navigation.goBack();
   }
 
-  function handleNavigateToDetail() {
-    navigation.navigate('Detail');
+  function handleNavigateToDetail(id: number) {
+    navigation.navigate('Detail', { point_id: id });
   }
 
   function handleSelectItem(id: number) {
@@ -129,7 +131,7 @@ const Points = () => {
                   {points.map(point => (
                     <Marker 
                       key={String(point.id)}
-                      onPress={handleNavigateToDetail}
+                      onPress={() => handleNavigateToDetail(point.id)}
                       style={styles.mapMarker}
                       coordinate={{ 
                         latitude: point.latitude,
@@ -140,7 +142,7 @@ const Points = () => {
                         <Image 
                           style={styles.mapMarkerImage}
                           source={{
-                            uri: point.image
+                            uri: point.image_url
                           }} 
                         />
                         <Text style={styles.mapMarkerTitle} >{point.name}</Text>
@@ -245,8 +247,8 @@ const styles = StyleSheet.create({
   
     itemsContainer: {
       flexDirection: "row",
-      marginTop: 16,
-      marginBottom: 32,
+      marginTop: 2,
+      marginBottom: 2,
     },
   
     item: {
